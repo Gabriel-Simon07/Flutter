@@ -1,9 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(ByteBankApp());
 
 class ByteBankApp extends StatelessWidget {
-  const ByteBankApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,43 +78,50 @@ class FormularioTransferencia extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _controladorCampoNumeroConta,
-                style: TextStyle(fontSize: 20.0),
-                decoration: InputDecoration(
-                    labelText: 'Número da conta', hintText: '0000'),
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _controladorCampoValorConta,
-                style: TextStyle(fontSize: 20.0),
-                decoration: InputDecoration(
-                    icon: Icon(Icons.monetization_on),
-                    labelText: 'Valor',
-                    hintText: '0.00'),
-                keyboardType: TextInputType.number,
-              ),
-            ),
+            Editor(controlador: _controladorCampoNumeroConta, dica: '0000', rotulo: 'Número da conta'),
+            Editor(controlador: _controladorCampoValorConta, dica: '0.00', rotulo: 'Valor', icone: Icons.monetization_on),
             ElevatedButton(
-                onPressed: () {
-                  debugPrint('Clicou no botão de confirmar');
-                  final int? numeroConta =
-                      int.tryParse(_controladorCampoNumeroConta.text);
-                  final double? valorConta =
-                      double.tryParse(_controladorCampoValorConta.text);
-                  if (numeroConta != null && valorConta != null) {
-                    final transferenciaCriada =
-                        Transferencia(valorConta, numeroConta);
-                    debugPrint('$transferenciaCriada');
-                  }
-                },
+                onPressed: () => _criaTransferencia(),
                 child: Text('Confirmar'))
           ],
         ));
   }
+
+  void _criaTransferencia() {
+    final int? numeroConta =
+        int.tryParse(_controladorCampoNumeroConta.text);
+    final double? valorConta =
+        double.tryParse(_controladorCampoValorConta.text);
+    if (numeroConta != null && valorConta != null) {
+      final transferenciaCriada =
+          Transferencia(valorConta, numeroConta);
+      debugPrint('$transferenciaCriada');
+    }
+  }
 }
+
+class Editor extends StatelessWidget {
+
+  final TextEditingController? controlador;
+  final String? rotulo;
+  final String? dica;
+  final IconData? icone;
+
+  Editor({this.controlador, this.rotulo, this.dica, this.icone});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        controller: controlador,
+        style: TextStyle(fontSize: 20.0),
+        decoration: InputDecoration(
+          icon: icone != null ? Icon(icone) : null,
+            labelText: rotulo, hintText: dica),
+        keyboardType: TextInputType.number,
+      ),
+    );
+  }
+}
+
